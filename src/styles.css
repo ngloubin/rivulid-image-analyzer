@@ -51,6 +51,11 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-viewer: var(--viewer);
+  --color-status-ok: var(--status-ok);
+  --color-status-warn: var(--status-warn);
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -62,15 +67,23 @@
 }
 
 :root {
-  --radius: 0.625rem;
+  --radius: 0.375rem;
+  --viewer: oklch(0.93 0.004 230);
+  --status-ok: oklch(0.6 0.15 155);
+  --status-warn: oklch(0.72 0.16 70);
+  --det-pending: oklch(0.78 0.17 75);
+  --det-confirmed: oklch(0.65 0.18 150);
+  --det-edited: oklch(0.62 0.2 320);
+  --det-manual: oklch(0.62 0.17 240);
+  --det-rejected: oklch(0.6 0.02 250);
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
+  --primary: oklch(0.5 0.1 200);
+  --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
   --muted: oklch(0.968 0.007 247.896);
@@ -98,14 +111,15 @@
 }
 
 .dark {
+  --viewer: oklch(0.16 0.008 230);
   --background: oklch(0.129 0.042 264.695);
   --foreground: oklch(0.984 0.003 247.858);
   --card: oklch(0.208 0.042 265.755);
   --card-foreground: oklch(0.984 0.003 247.858);
   --popover: oklch(0.208 0.042 265.755);
   --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
-  --primary-foreground: oklch(0.208 0.042 265.755);
+  --primary: oklch(0.72 0.11 200);
+  --primary-foreground: oklch(0.16 0.02 230);
   --secondary: oklch(0.279 0.041 260.031);
   --secondary-foreground: oklch(0.984 0.003 247.858);
   --muted: oklch(0.279 0.041 260.031);
@@ -138,6 +152,7 @@
   }
 
   body {
+    font-family: var(--font-sans);
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
