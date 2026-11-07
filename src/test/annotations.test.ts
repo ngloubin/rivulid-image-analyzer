@@ -8,7 +8,7 @@ const meta = { fileName: "s.jpg", width: 4000, height: 3000, model: null, proces
 
 describe("coordinates", () => {
   it("maps screen to original pixels after fit and zoom", () => {
-    const v = fitView(4000, 3000, 816, 632); // zoom 0.2, offset 8,16
+    const v = fitView(4000, 3000, 832, 632);
     expect(v.zoom).toBeCloseTo(0.2);
     const z = zoomAt(v, 1, 300, 200);
     const before = screenToImage(300, 200, v), after = screenToImage(300, 200, z);
