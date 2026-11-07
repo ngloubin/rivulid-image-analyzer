@@ -30,7 +30,7 @@ export function letterbox(img: ImageBitmap, tw: number, th: number) {
 export function toCHW(rgba: Uint8ClampedArray, w: number, h: number): Float32Array {
   const n = w * h, out = new Float32Array(3 * n);
   for (let i = 0; i < n; i++) {
-    out[i] = rgba[i * 4] / 255; out[n + i] = rgba[i * 4 + 1] / 255; out[2 * n + i] = rgba[i * 4 + 2] / 255;
+    out[i] = rgba[i * 4]! / 255; out[n + i] = rgba[i * 4 + 1]! / 255; out[2 * n + i] = rgba[i * 4 + 2]! / 255;
   }
   return out;
 }

@@ -44,9 +44,9 @@ export class YOLOAdapter implements ModelAdapter {
     const out = Object.values(outputs)[0] as { data: Float32Array; dims: readonly number[] };
     const nc = this.cfg.numClasses!, stride = 4 + nc;
     const cf = this.cfg.outputLayout === "channels_first";
-    const N = cf ? out.dims[2] : out.dims[1];
+    const N = (cf ? out.dims[2] : out.dims[1]) ?? 0;
     if ((cf ? out.dims[1] : out.dims[2]) !== stride) throw new Error(`Saída inesperada ${JSON.stringify(out.dims)} para ${nc} classe(s).`);
-    const at = (i: number, k: number) => (cf ? out.data[k * N + i] : out.data[i * stride + k]);
+    const at = (i: number, k: number) => ((cf ? out.data[k * N + i] : out.data[i * stride + k]) ?? 0);
     const preds: RawPrediction[] = [];
     for (let i = 0; i < N; i++) {
       let best = 0, cls = 0;

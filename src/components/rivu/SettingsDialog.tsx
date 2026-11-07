@@ -62,7 +62,7 @@ export function SettingsDialog({ open, onOpenChange, settings, onSettings, engin
             <div><Label>Limiar IoU (NMS)</Label><Input type="number" step={0.05} {...num("iouThreshold")} /></div>
             <div><Label>Nome do tensor de entrada</Label><Input value={cfg.inputName ?? ""} onChange={(e) => setCfg({ ...cfg, inputName: e.target.value })} /></div>
             <div><Label>Formato da saída</Label>
-              <select className={sel} value={cfg.outputLayout ?? ""} onChange={(e) => setCfg({ ...cfg, outputLayout: (e.target.value || undefined) as YOLOConfig["outputLayout"] })}>
+              <select className={sel} value={cfg.outputLayout ?? ""} onChange={(e) => setCfg({ ...cfg, outputLayout: (e.target.value || undefined) as YOLOConfig["outputLayout"] } as Partial<YOLOConfig>)}>
                 <option value="">Selecionar…</option><option value="channels_first">[1, 4+nc, N]</option><option value="rows">[1, N, 4+nc]</option></select></div>
             <div><Label>Execução</Label>
               <select className={sel} value={provider} onChange={(e) => setProvider(e.target.value as ExecutionProvider)}>

@@ -259,7 +259,7 @@ export function Workspace() {
               <div className="flex justify-between"><span className="text-muted-foreground">Tempo de processamento</span><span className="font-mono">{cur?.processingMs != null ? `${cur.processingMs.toFixed(0)} ms` : "—"}</span></div>
               <div className={cn(!modelReady && "opacity-50")}>
                 <div className="mb-1 flex justify-between"><span className="text-muted-foreground">Confiança mínima</span><span className="font-mono">{conf.toFixed(2)}</span></div>
-                <Slider disabled={!modelReady} min={0.05} max={0.95} step={0.05} value={[conf]} onValueChange={([v]) => setConf(v)} />
+                <Slider disabled={!modelReady} min={0.05} max={0.95} step={0.05} value={[conf]} onValueChange={([v]) => v != null && setConf(v)} />
               </div>
               <Button className="w-full" size="sm" disabled={!cur || !modelReady || busy} onClick={analyze}><ScanSearch className="h-4 w-4" /> {busy ? "Analisando…" : "Analisar imagem"}</Button>
               {!modelReady && <p className="rounded border border-dashed p-2 text-[11px] leading-snug text-muted-foreground">Detecção automática indisponível: nenhum modelo ONNX carregado. Marcação manual, revisão e exportação funcionam normalmente. <button className="underline" onClick={() => setSettingsOpen(true)}>Carregar modelo</button></p>}
