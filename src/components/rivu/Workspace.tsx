@@ -180,9 +180,9 @@ export function Workspace() {
               <PopoverContent align="end" className="w-80 text-xs leading-relaxed">
                 <p className="mb-2 font-semibold">Atalhos</p>
                 <ul className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 font-mono">
-                  {[["M", "marcar ovo (clique = caixa padrão, arraste = caixa)"], ["V", "mover imagem"], ["Alt+arraste", "mover imagem em qualquer modo"], ["Roda", "zoom no cursor"], ["F", "ajustar à tela"], ["+ / −", "zoom"], ["H", "mostrar/ocultar marcações"], ["C / R", "confirmar / rejeitar seleção"], ["Del", "remover seleção"], ["Ctrl+Z", "desfazer"]].map(([k, v]) => (
-                    <><span key={k} className="text-foreground">{k}</span><span className="font-sans text-muted-foreground">{v}</span></>
-                  ))}
+                  {[["M", "marcar ovo (clique = caixa padrão, arraste = caixa)"], ["V", "mover imagem"], ["Alt+arraste", "mover imagem em qualquer modo"], ["Roda", "zoom no cursor"], ["F", "ajustar à tela"], ["+ / −", "zoom"], ["H", "mostrar/ocultar marcações"], ["C / R", "confirmar / rejeitar seleção"], ["Del", "remover seleção"], ["Ctrl+Z", "desfazer"]].flatMap(([k, v]) => [
+                    <span key={k} className="text-foreground">{k}</span>, <span key={k + "d"} className="font-sans text-muted-foreground">{v}</span>,
+                  ])}
                 </ul>
                 <p className="mt-3 text-muted-foreground">Coordenadas exportadas em pixels da fotografia original (origem no canto superior esquerdo). As fotografias são processadas apenas no seu navegador.</p>
               </PopoverContent>
