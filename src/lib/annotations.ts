@@ -40,9 +40,11 @@ export function fitView(imgW: number, imgH: number, cw: number, ch: number, pad 
   return { zoom, x: (cw - imgW * zoom) / 2, y: (ch - imgH * zoom) / 2 };
 }
 
-export const STATUS_COLOR: Record<Detection["status"], string> = {
-  pending: "var(--det-pending)", confirmed: "var(--det-confirmed)", edited: "var(--det-edited)", rejected: "var(--det-rejected)",
-};
+function colorVar(d: Detection) {
+  if (d.status === "edited") return "--det-edited";
+  if (d.source === "manual") return "--det-manual";
+  return d.status === "confirmed" ? "--det-confirmed" : "--det-pending";
+}
 
 export async function renderAnnotatedPNG(file: Blob, dets: Detection[]): Promise<Blob> {
   const bmp = await createImageBitmap(file, { imageOrientation: "from-image" } as ImageBitmapOptions);
@@ -53,7 +55,7 @@ export async function renderAnnotatedPNG(file: Blob, dets: Detection[]): Promise
   const lw = Math.max(2, Math.round(Math.max(c.width, c.height) / 800));
   const css = getComputedStyle(document.documentElement);
   dets.filter((d) => d.status !== "rejected").forEach((d, i) => {
-    const col = css.getPropertyValue(`--det-${d.source === "manual" && d.status === "pending" ? "manual" : d.status}`).trim() || "red";
+    const col = css.getPropertyValue(colorVar(d)).trim() || "red";
     ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.strokeRect(d.x, d.y, d.w, d.h);
     ctx.fillStyle = col; ctx.font = `${lw * 6}px sans-serif`; ctx.fillText(String(i + 1), d.x, Math.max(lw * 6, d.y - lw));
   });
