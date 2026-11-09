@@ -1,76 +1,243 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { engine, type EngineState } from "@/lib/engine/DetectionEngine";
-import { YOLOAdapter, type YOLOConfig } from "@/lib/engine/YOLOAdapter";
 import type { ExecutionProvider } from "@/lib/engine/types";
-
-export interface AppSettings { markerSize: number; theme: "light" | "dark" }
+import type { AppSettings } from "./appSettings";
 
 interface Props {
-  open: boolean; onOpenChange: (o: boolean) => void;
-  settings: AppSettings; onSettings: (s: AppSettings) => void;
-  engineState: EngineState; onEngineState: (s: EngineState) => void; conf: number;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  settings: AppSettings;
+  onSettings: (settings: AppSettings) => void;
+  engineState: EngineState;
+  busy: boolean;
 }
-
-const sel = "h-9 w-full rounded-md border bg-background px-2 text-sm";
-
-export function SettingsDialog({ open, onOpenChange, settings, onSettings, engineState, onEngineState, conf }: Props) {
-  const [file, setFile] = useState<File | null>(null);
-  const [cfg, setCfg] = useState<Partial<YOLOConfig>>({ inputName: "images", numClasses: 1, iouThreshold: 0.45 });
+const selectClass = "h-9 w-full rounded-md border bg-background px-2 text-sm";
+export function SettingsDialog({
+  open,
+  onOpenChange,
+  settings,
+  onSettings,
+  engineState,
+  busy,
+}: Props) {
+  const [file, setFile] = useState<File | null>(null),
+    [configFile, setConfigFile] = useState<File | null>(null);
   const [provider, setProvider] = useState<ExecutionProvider>("wasm");
-  const gpu = typeof navigator !== "undefined" && "gpu" in navigator;
-
-  const load = async () => {
-    if (!file) return;
-    const adapter = new YOLOAdapter({ ...cfg, confThreshold: Math.min(conf, 0.05), iouThreshold: cfg.iouThreshold ?? 0.45 } as YOLOConfig);
-    const err = adapter.validateConfig();
-    if (err) { toast.error(err); return; }
-    onEngineState({ kind: "loading", name: file.name });
+  const [working, setWorking] = useState(false);
+  const disabled = busy || working || engineState.kind === "loading";
+  async function loadIncluded() {
+    setWorking(true);
     try {
-      await engine.load(await file.arrayBuffer(), file.name, adapter, provider);
-      onEngineState(engine.state); toast.success("Modelo carregado");
-    } catch (e) { onEngineState({ kind: "error", message: (e as Error).message }); toast.error(`Falha ao carregar: ${(e as Error).message}`); }
-  };
-
-  const num = (k: keyof YOLOConfig) => ({ value: (cfg[k] as number | undefined) ?? "", onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCfg({ ...cfg, [k]: e.target.value === "" ? undefined : Number(e.target.value) }) });
-
+      await engine.loadBundled(provider);
+      toast.success("Modelo incluído carregado.");
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setWorking(false);
+    }
+  }
+  async function load() {
+    if (!file || !configFile) return;
+    setWorking(true);
+    try {
+      await engine.load(file, configFile, provider);
+      toast.success("Modelo carregado e metadados validados.");
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setWorking(false);
+    }
+  }
+  async function unload(forget: boolean) {
+    setWorking(true);
+    try {
+      await engine.unload(forget);
+      toast.success(
+        forget
+          ? "Modelo removido do navegador."
+          : "Modelo liberado da memória; cópia local preservada.",
+      );
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setWorking(false);
+    }
+  }
+  async function restoreSaved() {
+    setWorking(true);
+    try {
+      await engine.load();
+      const state = engine.getSnapshot();
+      if (state.kind === "error") toast.error(state.message);
+      else if (state.kind === "none") toast.info("Nenhum modelo salvo neste navegador.");
+      else toast.success("Modelo restaurado.");
+    } catch (error) {
+      toast.error((error as Error).message);
+    } finally {
+      setWorking(false);
+    }
+  }
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-lg">
-        <DialogHeader><DialogTitle>Configurações</DialogTitle><DialogDescription>Preferências de trabalho e modelo de detecção.</DialogDescription></DialogHeader>
+        <DialogHeader>
+          <DialogTitle>Configurações</DialogTitle>
+          <DialogDescription>Preferências e modelo local de detecção.</DialogDescription>
+        </DialogHeader>
         <div className="grid grid-cols-2 gap-3 text-sm">
-          <div><Label>Tema</Label>
-            <select className={sel} value={settings.theme} onChange={(e) => onSettings({ ...settings, theme: e.target.value as AppSettings["theme"] })}><option value="light">Claro</option><option value="dark">Escuro</option></select></div>
-          <div><Label>Tamanho da marcação por clique (px)</Label>
-            <Input type="number" min={2} max={2000} value={settings.markerSize} onChange={(e) => onSettings({ ...settings, markerSize: Math.max(2, Number(e.target.value) || 24) })} /></div>
-        </div>
-
-        <div className="mt-2 space-y-3 rounded-md border p-3 text-sm">
-          <div className="flex items-center justify-between"><p className="font-medium">Modelo YOLO11 (ONNX)</p>
-            <span className="text-xs text-muted-foreground">{engineState.kind === "ready" ? `Ativo: ${engineState.name}` : engineState.kind === "loading" ? "Carregando…" : engineState.kind === "error" ? "Erro" : "Nenhum modelo"}</span></div>
-          {engineState.kind === "error" && <p className="text-xs text-destructive">{engineState.message}</p>}
-          <p className="text-xs text-muted-foreground">O modelo é carregado sob demanda, executado localmente no navegador e nunca enviado a servidores. Informe os parâmetros exatos da exportação — nenhum valor é presumido.</p>
-          <div><Label>Arquivo .onnx</Label><Input type="file" accept=".onnx" onChange={(e) => setFile(e.target.files?.[0] ?? null)} /></div>
-          <div className="grid grid-cols-2 gap-2">
-            <div><Label>Largura de entrada</Label><Input type="number" placeholder="ex.: imgsz" {...num("inputWidth")} /></div>
-            <div><Label>Altura de entrada</Label><Input type="number" placeholder="ex.: imgsz" {...num("inputHeight")} /></div>
-            <div><Label>Nº de classes</Label><Input type="number" min={1} {...num("numClasses")} /></div>
-            <div><Label>Limiar IoU (NMS)</Label><Input type="number" step={0.05} {...num("iouThreshold")} /></div>
-            <div><Label>Nome do tensor de entrada</Label><Input value={cfg.inputName ?? ""} onChange={(e) => setCfg({ ...cfg, inputName: e.target.value })} /></div>
-            <div><Label>Formato da saída</Label>
-              <select className={sel} value={cfg.outputLayout ?? ""} onChange={(e) => setCfg({ ...cfg, outputLayout: (e.target.value || undefined) as YOLOConfig["outputLayout"] } as Partial<YOLOConfig>)}>
-                <option value="">Selecionar…</option><option value="channels_first">[1, 4+nc, N]</option><option value="rows">[1, N, 4+nc]</option></select></div>
-            <div><Label>Execução</Label>
-              <select className={sel} value={provider} onChange={(e) => setProvider(e.target.value as ExecutionProvider)}>
-                <option value="wasm">WebAssembly</option><option value="webgpu" disabled={!gpu}>WebGPU{gpu ? "" : " (indisponível)"}</option></select></div>
+          <div>
+            <Label htmlFor="theme">Tema</Label>
+            <select
+              id="theme"
+              className={selectClass}
+              value={settings.theme}
+              onChange={(e) =>
+                onSettings({ ...settings, theme: e.target.value as AppSettings["theme"] })
+              }
+            >
+              <option value="light">Claro</option>
+              <option value="dark">Escuro</option>
+            </select>
           </div>
-          <div className="flex gap-2">
-            <Button size="sm" disabled={!file || engineState.kind === "loading"} onClick={load}>Carregar modelo</Button>
-            {engineState.kind === "ready" && <Button size="sm" variant="outline" onClick={async () => { await engine.unload(); onEngineState(engine.state); }}>Liberar modelo</Button>}
+          <div>
+            <Label htmlFor="marker">Marcação por clique (px)</Label>
+            <Input
+              id="marker"
+              type="number"
+              min={2}
+              max={2000}
+              value={settings.markerSize}
+              onChange={(e) =>
+                onSettings({
+                  ...settings,
+                  markerSize: Math.min(2000, Math.max(2, Number(e.target.value) || 24)),
+                })
+              }
+            />
+          </div>
+        </div>
+        <div className="space-y-3 rounded-md border p-3 text-sm">
+          <p className="font-medium">Modelo incluído no site</p>
+          <p className="text-xs text-muted-foreground">
+            {engine.bundledModelName}. Download inicial de aproximadamente 17 MB, incluindo o
+            runtime. Depois, o modelo fica salvo neste navegador. A análise usa o dispositivo.
+          </p>
+          <Button size="sm" disabled={disabled} onClick={loadIncluded}>
+            Carregar modelo incluído
+          </Button>
+          <hr />
+          <p className="font-medium">Modelo ONNX + configuração JSON</p>
+          <p className="text-xs text-muted-foreground">
+            O JSON descreve a arquitetura, as classes e o protocolo de análise. Os nomes e dimensões
+            dos tensores são lidos do ONNX e conferidos. Modelo e configuração ficam neste
+            navegador; as fotografias não são enviadas.
+          </p>
+          <div>
+            <Label htmlFor="model-file">Arquivo .onnx</Label>
+            <Input
+              id="model-file"
+              type="file"
+              accept=".onnx"
+              disabled={disabled}
+              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="model-config">Configuração .json</Label>
+            <Input
+              id="model-config"
+              type="file"
+              accept=".json,application/json"
+              disabled={disabled}
+              onChange={(e) => setConfigFile(e.target.files?.[0] ?? null)}
+            />
+          </div>
+          <div>
+            <Label htmlFor="provider">Execução preferida</Label>
+            <select
+              id="provider"
+              className={selectClass}
+              disabled={disabled}
+              value={provider}
+              onChange={(e) => setProvider(e.target.value as ExecutionProvider)}
+            >
+              <option value="wasm">WebAssembly (CPU)</option>
+              <option
+                value="webgpu"
+                disabled={typeof navigator === "undefined" || !("gpu" in navigator)}
+              >
+                WebGPU, com alternativa em CPU
+              </option>
+            </select>
+          </div>
+          {engineState.kind === "loading" && <p role="status">Carregando {engineState.name}…</p>}
+          {engineState.kind === "error" && (
+            <p role="alert" className="text-xs text-destructive">
+              {engineState.message}
+            </p>
+          )}
+          {engineState.kind === "ready" && (
+            <>
+              <p className="text-xs">
+                Ativo: {engineState.name} · v{engineState.config.version} ·{" "}
+                {engineState.provider.toUpperCase()}
+              </p>
+              {engineState.fallbackReason && (
+                <p className="text-xs text-muted-foreground">
+                  WebGPU indisponível; a sessão foi aberta em WebAssembly.
+                </p>
+              )}
+              {engineState.cacheWarning && (
+                <p role="alert" className="text-xs text-destructive">
+                  {engineState.cacheWarning}
+                </p>
+              )}
+              <details className="text-xs">
+                <summary className="cursor-pointer">Identificação e parâmetros do modelo</summary>
+                <pre className="mt-2 overflow-auto whitespace-pre-wrap break-all">
+                  {JSON.stringify(
+                    {
+                      sha256: engineState.hash,
+                      input: engineState.config.input,
+                      outputs: engineState.metadata.outputs,
+                      classes: engineState.config.classes,
+                      inference: engineState.config.inference,
+                    },
+                    null,
+                    2,
+                  )}
+                </pre>
+              </details>
+            </>
+          )}
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" disabled={!file || !configFile || disabled} onClick={load}>
+              Carregar modelo
+            </Button>
+            {engineState.kind === "ready" && (
+              <Button size="sm" variant="outline" disabled={disabled} onClick={() => unload(false)}>
+                Liberar da memória
+              </Button>
+            )}
+            {engineState.kind !== "ready" && (
+              <Button size="sm" variant="outline" disabled={disabled} onClick={restoreSaved}>
+                Restaurar modelo salvo
+              </Button>
+            )}
+            <Button size="sm" variant="outline" disabled={disabled} onClick={() => unload(true)}>
+              Remover modelo salvo
+            </Button>
           </div>
         </div>
       </DialogContent>

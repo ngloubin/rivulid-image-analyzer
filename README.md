@@ -1,3 +1,9 @@
+# Rivulídeos AI — integração funcional
+
+Contratos de modelo, contagem/revisão, configuração ONNX + JSON, validação e limites estão em [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md).
+
+Configuração de exemplo (não validada com um ONNX real): [examples/yolo-v2.json](examples/yolo-v2.json).
+
 # Rivulid Image Analyzer
 
 Desenvolva a aplicação web funcional de análise científica de imagens Rivulídeos AI exatamente conforme especificado no documento em anexo:

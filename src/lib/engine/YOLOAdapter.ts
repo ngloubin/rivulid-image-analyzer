@@ -1,62 +1,50 @@
-import { letterbox, toCHW } from "./ImageProcessor";
-import { nms } from "./ResultProcessor";
-import type { ModelAdapter, RawPrediction } from "./types";
+import { inverseBox, prepareInput, type Transform } from "./ImageProcessor";
+import type { ResolvedModelConfig } from "./ModelConfig";
+import type { ModelAdapter, RawPrediction, TensorData } from "./types";
 
-/**
- * YOLO11 ONNX adapter. Input size and output layout are NOT assumed: they must be
- * supplied explicitly in the model config (from the exported model's metadata).
- */
-export interface YOLOConfig {
-  inputName?: string;
-  inputWidth?: number;
-  inputHeight?: number;
-  /** "channels_first": [1, 4+nc, N] (Ultralytics default); "rows": [1, N, 4+nc]. */
-  outputLayout?: "channels_first" | "rows";
-  numClasses?: number;
-  confThreshold: number;
-  iouThreshold: number;
+export function readTensor(outputs: Record<string, unknown>, name: string): TensorData {
+  const t = outputs[name] as TensorData | undefined;
+  if (
+    !t ||
+    !Array.isArray(t.dims) ||
+    !t.data ||
+    t.data.length !== t.dims.reduce((a, b) => a * b, 1)
+  )
+    throw new Error("Tensor ausente/inválido: " + name);
+  return t;
 }
-
-type Meta = { scale: number; padX: number; padY: number };
-
+/** YOLO dense xywh + class probabilities, with no objectness column. */
 export class YOLOAdapter implements ModelAdapter {
-  readonly name = "YOLO11 (ONNX)";
-  constructor(public cfg: YOLOConfig) {}
-
-  validateConfig() {
-    const c = this.cfg;
-    if (!c.inputWidth || !c.inputHeight) return "Dimensões de entrada do modelo não informadas.";
-    if (!c.outputLayout) return "Formato de saída do modelo não informado.";
-    if (!c.numClasses) return "Número de classes não informado.";
-    return null;
+  readonly name = "YOLO (ONNX)";
+  constructor(public readonly config: ResolvedModelConfig) {}
+  preprocess(img: ImageBitmap) {
+    return prepareInput(img, this.config);
   }
-
-  async preprocess(img: ImageBitmap) {
-    const ort = await import("onnxruntime-web");
-    const { inputWidth: w, inputHeight: h } = this.cfg as Required<YOLOConfig>;
-    const { data, scale, padX, padY } = letterbox(img, w, h);
-    const tensor = new ort.Tensor("float32", toCHW(data, w, h), [1, 3, h, w]);
-    return { feeds: { [this.cfg.inputName ?? "images"]: tensor }, meta: { scale, padX, padY } as Meta, dispose: () => tensor.dispose() };
-  }
-
-  postprocess(outputs: Record<string, unknown>, meta: unknown, W: number, H: number): RawPrediction[] {
-    const { scale, padX, padY } = meta as Meta;
-    const out = Object.values(outputs)[0] as { data: Float32Array; dims: readonly number[] };
-    const nc = this.cfg.numClasses!, stride = 4 + nc;
-    const cf = this.cfg.outputLayout === "channels_first";
-    const N = (cf ? out.dims[2] : out.dims[1]) ?? 0;
-    if ((cf ? out.dims[1] : out.dims[2]) !== stride) throw new Error(`Saída inesperada ${JSON.stringify(out.dims)} para ${nc} classe(s).`);
-    const at = (i: number, k: number) => ((cf ? out.data[k * N + i] : out.data[i * stride + k]) ?? 0);
+  postprocess(outputs: Record<string, unknown>, meta: unknown): RawPrediction[] {
+    const out = readTensor(outputs, this.config.output.name!);
+    const nc = this.config.classes.length,
+      stride = 4 + nc,
+      cf = this.config.output.layout === "channels_first";
+    if (out.dims.length !== 3 || out.dims[0] !== 1 || (cf ? out.dims[1] : out.dims[2]) !== stride)
+      throw new Error("Formato de saída YOLO diverge da configuração.");
+    const N = (cf ? out.dims[2] : out.dims[1])!;
+    const at = (i: number, k: number) => out.data[cf ? k * N + i : i * stride + k]!;
     const preds: RawPrediction[] = [];
     for (let i = 0; i < N; i++) {
-      let best = 0, cls = 0;
-      for (let c = 0; c < nc; c++) { const s = at(i, 4 + c); if (s > best) { best = s; cls = c; } }
-      if (best < this.cfg.confThreshold) continue;
-      const cx = (at(i, 0) - padX) / scale, cy = (at(i, 1) - padY) / scale;
-      const bw = at(i, 2) / scale, bh = at(i, 3) / scale;
-      preds.push({ x: cx - bw / 2, y: cy - bh / 2, w: bw, h: bh, confidence: best, classId: cls });
+      let confidence = -Infinity,
+        classId = 0;
+      for (let c = 0; c < nc; c++)
+        if (at(i, 4 + c) > confidence) {
+          confidence = at(i, 4 + c);
+          classId = c;
+        }
+      if (confidence < this.config.inference.candidateThreshold) continue;
+      preds.push({
+        ...inverseBox(at(i, 0), at(i, 1), at(i, 2), at(i, 3), meta as Transform),
+        confidence,
+        classId,
+      });
     }
-    void W; void H;
-    return nms(preds, this.cfg.iouThreshold);
+    return preds;
   }
 }
