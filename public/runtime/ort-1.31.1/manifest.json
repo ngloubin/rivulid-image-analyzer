@@ -3,6 +3,6 @@
   "module": "ort-wasm-simd-threaded.asyncify.mjs",
   "wasm": "ort-wasm-simd-threaded.asyncify.wasm.gz",
   "bytes": 28747738,
-  "compressedBytes": 7201514,
+  "compressedBytes": 7189640,
   "sha256": "ca319e9539cd0f1e291cf56074760121eaf39650f5dbf84b6e52c07f4b2944ec"
 }
