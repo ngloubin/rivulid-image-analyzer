@@ -1,0 +1,9 @@
+{
+  "source": "same-project-code-archive",
+  "capabilities": [
+    {"capability":"code and design","source":"verified archive manifest","outcome":"preserve","status":"pending","next_action":"copy exact source except generated files"},
+    {"capability":"first model and runtime bytes","source":"public/models and public/runtime","outcome":"preserve same-domain static binaries","status":"pending","next_action":"copy and verify HTTP hashes"},
+    {"capability":"database, records, auth, authorization, external providers, callbacks, webhooks, schedules and secrets","source":"inspection manifest and local-only engine","outcome":"not present; do not add","status":"not_applicable","next_action":null},
+    {"capability":"cutover and verification","source":"Lovable publication","outcome":"publish current project","status":"pending","next_action":"browser verification and publish"}
+  ]
+}
