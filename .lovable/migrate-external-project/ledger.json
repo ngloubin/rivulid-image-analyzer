@@ -2,8 +2,9 @@
   "source": "same-project-code-archive",
   "capabilities": [
     {"capability":"code and design","source":"verified archive manifest","outcome":"preserved; generated route tree retained; 48 tests, ESLint and automatic build OK","status":"verified","next_action":null},
-    {"capability":"first model and runtime bytes","source":"public/models and public/runtime","outcome":"HTTP 200; model hash exact; runtime preparation regenerated gzip with identical uncompressed bytes; browser WASM inference and cached restore successful","status":"verified_preview","next_action":"verify published host"},
+    {"capability":"first model and runtime bytes","source":"public/models and public/runtime","outcome":"Published same-domain HTTP 200; model hash exact; runtime preparation regenerated gzip with identical uncompressed bytes; published browser WASM inference and cached restore successful","status":"verified","next_action":null},
     {"capability":"database, records, auth, authorization, external providers, callbacks, webhooks, schedules and secrets","source":"inspection manifest and local-only engine","outcome":"not present; do not add","status":"not_applicable","next_action":null},
-    {"capability":"cutover and verification","source":"Lovable publication","outcome":"publish current project","status":"pending","next_action":"browser verification and publish"}
+    {"capability":"cutover and verification","source":"https://rivulid-egg-vision.lovable.app","outcome":"Published and verified loading, inference on synthetic 256x256 image (2 windows, 1569.9 ms, zero candidates), JSON export via keyboard, cached restore and no page errors; no scientific accuracy claim","status":"verified","next_action":null},
+    {"capability":"hosting badge","source":"published browser interaction","outcome":"Edit with Lovable badge intercepts mouse click on bottom JSON export; keyboard export works; package design left intact","status":"blocked","next_action":"User explicitly requests badge hiding (Pro+) or authorizes layout change"}
   ]
 }
