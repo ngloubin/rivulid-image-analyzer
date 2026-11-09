@@ -1,5 +1,4 @@
 <!-- LOVABLE:BEGIN -->
-
 > [!IMPORTANT]
 > This project is connected to [Lovable](https://lovable.dev). Avoid rewriting
 > published git history — force pushing, or rebasing/amending/squashing commits
@@ -28,7 +27,6 @@ use the editor.
   `LOVABLE_API_KEY`. When Lovable does not provide one, users can bring their
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
-
 <!-- LOVABLE:END -->
 
 ## Architecture
@@ -36,3 +34,4 @@ use the editor.
 - Detection code lives in `src/lib/engine/` (ImageProcessor, DetectionEngine, model adapters, ResultProcessor, ResourceManager); the UI talks only to `DetectionEngine`, so swapping models (YOLO11 → RF-DETR) means adding an adapter, not changing UI.
 - All detection coordinates are stored in original-image pixels; the viewer converts only for display, so exports stay exact at any zoom.
 - `onnxruntime-web` is imported dynamically only when a model is loaded, so the first page load stays light.
+- Run model sessions in the browser inference Worker and serve verified compressed ONNX/ORT assets from the same origin; the external-WASM Vite alias avoids emitting an oversized uncompressed runtime asset.
