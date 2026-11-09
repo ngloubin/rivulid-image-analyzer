@@ -30,6 +30,8 @@ use the editor.
 <!-- LOVABLE:END -->
 
 ## Architecture
+
 - Detection code lives in `src/lib/engine/` (ImageProcessor, DetectionEngine, model adapters, ResultProcessor, ResourceManager); the UI talks only to `DetectionEngine`, so swapping models (YOLO11 → RF-DETR) means adding an adapter, not changing UI.
 - All detection coordinates are stored in original-image pixels; the viewer converts only for display, so exports stay exact at any zoom.
 - `onnxruntime-web` is imported dynamically only when a model is loaded, so the first page load stays light.
+- Run model sessions in the browser inference Worker and serve verified compressed ONNX/ORT assets from the same origin; the external-WASM Vite alias avoids emitting an oversized uncompressed runtime asset.

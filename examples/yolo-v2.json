@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "rivulideos-yolo-v2",
+  "version": "EXEMPLO-NAO-VALIDADO",
+  "adapter": "yolo",
+  "classes": ["ovo_peixe_nuvem"],
+  "input": {},
+  "preprocessing": {
+    "resize": "letterbox",
+    "scale": 0.00392156862745098,
+    "mean": [0, 0, 0],
+    "std": [1, 1, 1],
+    "padValue": 114
+  },
+  "output": {},
+  "inference": {
+    "candidateThreshold": 0.05,
+    "windowNmsIou": 0.4,
+    "globalNmsIou": 0.4,
+    "reviewMergeIou": 0.5,
+    "tiling": {
+      "enabled": true,
+      "tileSizes": [
+        {
+          "width": 512,
+          "height": 512
+        },
+        {
+          "width": 1024,
+          "height": 1024
+        }
+      ],
+      "overlap": 0.25,
+      "maxWindows": 10000
+    }
+  }
+}

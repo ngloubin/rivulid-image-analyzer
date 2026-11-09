@@ -5,4 +5,9 @@ export function colorFor(d: Pick<Detection, "source" | "status">) {
   if (d.source === "manual") return "var(--det-manual)";
   return d.status === "confirmed" ? "var(--det-confirmed)" : "var(--det-pending)";
 }
-export const STATUS_LABEL: Record<Detection["status"], string> = { pending: "Pendente", confirmed: "Confirmada", edited: "Editada", rejected: "Rejeitada" };
+export const STATUS_LABEL: Record<Detection["status"], string> = {
+  pending: "Pendente",
+  confirmed: "Confirmada",
+  edited: "Editada",
+  rejected: "Rejeitada",
+};

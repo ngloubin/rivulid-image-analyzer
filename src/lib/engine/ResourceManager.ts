@@ -1,40 +1,59 @@
-/** Owns the single ONNX session, object URLs, and the one-inference-at-a-time lock. */
+import type { ExecutionProvider, ModelMetadata } from "./types";
+import { getOrtRuntime } from "./OrtRuntime";
+
 type OrtModule = typeof import("onnxruntime-web");
-
-class ResourceManagerImpl {
-  private ort: OrtModule | null = null;
-  private session: import("onnxruntime-web").InferenceSession | null = null;
-  private urls = new Set<string>();
-  private busy = false;
-
-  async loadOrt(): Promise<OrtModule> {
-    // Heavy module is only fetched when a model is actually loaded.
-    if (!this.ort) this.ort = await import("onnxruntime-web");
-    return this.ort;
+export async function createWithFallback<T>(
+  create: (provider: ExecutionProvider) => Promise<T>,
+  requested: ExecutionProvider,
+) {
+  try {
+    return { session: await create(requested), provider: requested, fallbackReason: null };
+  } catch (error) {
+    if (requested !== "webgpu") throw error;
+    return {
+      session: await create("wasm"),
+      provider: "wasm" as const,
+      fallbackReason: (error as Error).message,
+    };
   }
-
-  async createSession(model: ArrayBuffer, provider: "wasm" | "webgpu") {
-    await this.releaseSession();
-    const ort = await this.loadOrt();
-    const providers = provider === "webgpu" ? ["webgpu", "wasm"] : ["wasm"];
-    this.session = await ort.InferenceSession.create(new Uint8Array(model), { executionProviders: providers });
-    return this.session;
-  }
-
-  getSession() { return this.session; }
-
-  async releaseSession() {
-    if (this.session) { await this.session.release().catch(() => {}); this.session = null; }
-  }
-
-  async exclusive<T>(fn: () => Promise<T>): Promise<T> {
-    if (this.busy) throw new Error("Já existe uma inferência em andamento.");
-    this.busy = true;
-    try { return await fn(); } finally { this.busy = false; }
-  }
-
-  createObjectURL(blob: Blob) { const u = URL.createObjectURL(blob); this.urls.add(u); return u; }
-  revokeObjectURL(u: string | null | undefined) { if (u && this.urls.delete(u)) URL.revokeObjectURL(u); }
 }
-
-export const ResourceManager = new ResourceManagerImpl();
+/** Lives in the inference Worker. No photos or model bytes are uploaded. */
+export class SessionResources {
+  private session: import("onnxruntime-web").InferenceSession | null = null;
+  async createSession(model: ArrayBuffer, requested: ExecutionProvider) {
+    await this.releaseSession();
+    const ort: OrtModule = await getOrtRuntime();
+    const isolated = globalThis.crossOriginIsolated === true;
+    const threads = isolated
+      ? Math.max(1, Math.min(4, Math.floor((navigator.hardwareConcurrency || 2) / 2)))
+      : 1;
+    ort.env.wasm.numThreads = threads;
+    ort.env.wasm.proxy = false; // Already running in our own module Worker.
+    const loaded = await createWithFallback(
+      (provider) =>
+        ort.InferenceSession.create(new Uint8Array(model), { executionProviders: [provider] }),
+      requested,
+    );
+    this.session = loaded.session;
+    const metadata: ModelMetadata = {
+      inputs: this.session.inputMetadata.map((m) => {
+        if (!m.isTensor) throw new Error("Entrada não tensorial não suportada.");
+        return { name: m.name, type: m.type, shape: [...m.shape] };
+      }),
+      outputs: this.session.outputMetadata.map((m) => {
+        if (!m.isTensor) throw new Error("Saída não tensorial não suportada.");
+        return { name: m.name, type: m.type, shape: [...m.shape] };
+      }),
+    };
+    return { ...loaded, metadata, threads, isolated };
+  }
+  async run(feeds: Record<string, unknown>) {
+    if (!this.session) throw new Error("Sessão indisponível.");
+    return this.session.run(feeds as import("onnxruntime-web").InferenceSession.FeedsType);
+  }
+  async releaseSession() {
+    const previous = this.session;
+    this.session = null;
+    if (previous) await previous.release();
+  }
+}
