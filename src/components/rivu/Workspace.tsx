@@ -903,7 +903,11 @@ export function Workspace() {
                 Exportar diagnóstico de paridade
               </Button>
             </details>
-            <section className="grid grid-cols-3 gap-1 border-t p-2">
+            <section
+              aria-label="Exportar anotações"
+              className="grid shrink-0 grid-cols-3 gap-1 border-t p-2"
+              style={{ paddingBottom: "calc(4.5rem + env(safe-area-inset-bottom, 0px))" }}
+            >
               <Button size="sm" variant="outline" disabled={!cur} onClick={exportPNG}>
                 <Download className="h-3.5 w-3.5" />
                 PNG

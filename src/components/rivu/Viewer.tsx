@@ -351,9 +351,25 @@ export const Viewer = forwardRef<ViewerHandle, Props>(function Viewer(p, ref) {
           >
             {boxes.map((d) => {
               const col = colorFor(d),
-                isSelected = d.id === p.selectedId;
+                isSelected = d.id === p.selectedId,
+                borderWidth = isSelected ? 3.5 : 2.25,
+                dash = d.status === "rejected" ? "4 3" : undefined;
               return (
                 <g key={d.id} data-id={d.id} style={{ cursor: "move" }}>
+                  <rect
+                    x={d.x}
+                    y={d.y}
+                    width={d.w}
+                    height={d.h}
+                    fill="none"
+                    stroke="#0b1020"
+                    strokeWidth={borderWidth + 2.5}
+                    strokeLinejoin="round"
+                    vectorEffect="non-scaling-stroke"
+                    strokeDasharray={dash}
+                    pointerEvents="none"
+                    aria-hidden="true"
+                  />
                   <rect
                     x={d.x}
                     y={d.y}
@@ -362,17 +378,23 @@ export const Viewer = forwardRef<ViewerHandle, Props>(function Viewer(p, ref) {
                     fill={isSelected ? col : "transparent"}
                     fillOpacity={isSelected ? 0.15 : 0}
                     stroke={col}
-                    strokeWidth={isSelected ? 2.5 : 1.5}
+                    strokeWidth={borderWidth}
+                    strokeLinejoin="round"
                     vectorEffect="non-scaling-stroke"
-                    strokeDasharray={d.status === "rejected" ? "4 3" : undefined}
+                    strokeDasharray={dash}
                     pointerEvents="all"
                   />
-                  {z * Math.min(d.w, d.h) > 14 && (
+                  {(isSelected || z * Math.min(d.w, d.h) > 14) && (
                     <text
-                      x={d.x + 2 / z}
-                      y={d.y - 3 / z}
-                      fontSize={11 / z}
-                      fill={col}
+                      x={d.x + 3 / z}
+                      y={d.y * z >= 16 ? d.y - 4 / z : d.y + 13 / z}
+                      fontSize={12 / z}
+                      fontWeight={600}
+                      fill="#fff"
+                      stroke="#0b1020"
+                      strokeWidth={3 / z}
+                      strokeLinejoin="round"
+                      paintOrder="stroke"
                       className="font-mono"
                       pointerEvents="none"
                     >
