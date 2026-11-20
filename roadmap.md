@@ -5,3 +5,4 @@
 - [x] Publish and verify hosted assets; report any hosting blocker.
 - [x] Keep hosting badge visible; reserve bottom space (safe-area, shrink-0) so PNG/JSON/CSV stay clickable above it.
 - [x] Higher-contrast detection boxes (dark halo, constant-width borders, haloed numbers).
+- [x] Prevent visible detections and technical validation from overlapping on short screens; keep the export badge clearance.

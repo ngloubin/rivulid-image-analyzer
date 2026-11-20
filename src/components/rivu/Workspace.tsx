@@ -660,7 +660,7 @@ export function Workspace() {
             )}
           </main>
           <aside className="flex w-full shrink-0 flex-col overflow-y-auto border-t bg-card md:w-80 md:border-l md:border-t-0">
-            <section className="border-b p-3">
+            <section className="shrink-0 border-b p-3">
               <div className="grid grid-cols-3 gap-2 text-center">
                 {[
                   ["Total final", c.total],
@@ -688,7 +688,7 @@ export function Workspace() {
                 Somente manuais e automáticas confirmadas/editadas entram no total final.
               </p>
             </section>
-            <section className="space-y-2 border-b p-3 text-xs">
+            <section className="shrink-0 space-y-2 border-b p-3 text-xs">
               <div className="flex justify-between gap-2">
                 <span className="text-muted-foreground">Modelo desta análise</span>
                 <span className="truncate font-mono">{cur?.model ?? "nenhum"}</span>
@@ -807,14 +807,14 @@ export function Workspace() {
                 </p>
               )}
             </section>
-            <section className="flex min-h-40 flex-1 flex-col md:min-h-0">
-              <div className="flex justify-between px-3 pb-1 pt-2 text-xs font-medium">
+            <section className="flex min-h-40 flex-1 shrink-0 flex-col">
+              <div className="flex shrink-0 justify-between px-3 pb-1 pt-2 text-xs font-medium">
                 <span>Detecções visíveis</span>
                 <span className="font-mono text-muted-foreground">
                   {visible.length}/{dets.length}
                 </span>
               </div>
-              <ol className="max-h-72 flex-1 overflow-y-auto px-1 pb-2 md:max-h-none">
+              <ol className="min-h-0 max-h-72 flex-1 overflow-y-auto px-1 pb-2 md:max-h-none">
                 {!visible.length && (
                   <li className="px-2 py-3 text-xs text-muted-foreground">
                     {dets.length
@@ -888,7 +888,7 @@ export function Workspace() {
                   ))}
               </ol>
             </section>
-            <details className="border-t p-3 text-xs">
+            <details className="shrink-0 border-t p-3 text-xs">
               <summary className="cursor-pointer">Validação técnica</summary>
               <p className="my-2 text-muted-foreground">
                 Exporta o tensor de entrada e as saídas ONNX de uma passada para comparar com
