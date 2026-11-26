@@ -9,5 +9,6 @@
 
 # Google
 - [x] Connect the Google Search Console account.
-- [ ] Publish the uploaded verification file, site verification tag, canonical URL, sitemap and robots reference.
-- [ ] Verify the live files and submit the sitemap to Search Console.
+- [x] Publish the uploaded verification file, site verification tag, canonical URL, sitemap and robots reference.
+- [x] Verify the live files and submit the sitemap to Search Console.
+- [ ] Wait for Google to process the sitemap and index the homepage; it is currently unknown to Google, with no sitemap errors or warnings.
