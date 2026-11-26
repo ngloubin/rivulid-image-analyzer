@@ -35,3 +35,4 @@ use the editor.
 - All detection coordinates are stored in original-image pixels; the viewer converts only for display, so exports stay exact at any zoom.
 - `onnxruntime-web` is imported dynamically only when a model is loaded, so the first page load stays light.
 - Run model sessions in the browser inference Worker and serve verified compressed ONNX/ORT assets from the same origin; the external-WASM Vite alias avoids emitting an oversized uncompressed runtime asset.
+- Serve the favicon and touch icon as resized local PNGs declared in the root head; avoid shipping the full-resolution logo for browser icons.
