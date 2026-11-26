@@ -6,3 +6,8 @@
 - [x] Keep hosting badge visible; reserve bottom space (safe-area, shrink-0) so PNG/JSON/CSV stay clickable above it.
 - [x] Higher-contrast detection boxes (dark halo, constant-width borders, haloed numbers).
 - [x] Prevent visible detections and technical validation from overlapping on short screens; keep the export badge clearance.
+
+# Google
+- [x] Connect the Google Search Console account.
+- [ ] Publish the uploaded verification file, site verification tag, canonical URL, sitemap and robots reference.
+- [ ] Verify the live files and submit the sitemap to Search Console.

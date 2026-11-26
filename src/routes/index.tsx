@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Workspace } from "@/components/rivu/Workspace";
 
 export const Route = createFileRoute("/")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title: "Rivulídeos AI — Contagem de ovos de rivulídeos" },
@@ -17,8 +18,14 @@ export const Route = createFileRoute("/")({
           "Identificação, contagem e revisão de ovos de rivulídeos em fotografias, com processamento local.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://rivulideos-ai.lovable.app/" },
       { name: "twitter:card", content: "summary" },
+      {
+        name: "google-site-verification",
+        content: "XLF6KDjzMQw4Rq55HG2PBmGA-2RZFkFZ76Tk8lirP-Y",
+      },
     ],
+    links: [{ rel: "canonical", href: "https://rivulideos-ai.lovable.app/" }],
   }),
   component: Workspace,
 });
