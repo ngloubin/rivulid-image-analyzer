@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "events": {
+    "project.analysis_completed": {
+      "event_schema_version": 1,
+      "description": "AI analysis of a photo finished.",
+      "privacy": {
+        "contains_pii": false,
+        "purpose": "product_analytics"
+      },
+      "properties_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "candidates": {
+            "type": "number"
+          },
+          "duration_s": {
+            "type": "number"
+          },
+          "windows": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "candidates",
+          "windows",
+          "duration_s"
+        ],
+        "type": "object"
+      }
+    },
+    "project.analysis_failed": {
+      "event_schema_version": 1,
+      "description": "AI analysis of a photo failed with an error.",
+      "privacy": {
+        "contains_pii": false,
+        "purpose": "product_analytics"
+      },
+      "properties_schema": {
+        "additionalProperties": false,
+        "properties": {},
+        "type": "object"
+      }
+    },
+    "project.count_exported": {
+      "event_schema_version": 1,
+      "description": "Visitor exported a photo's egg count (PNG, JSON, CSV or PDF report).",
+      "privacy": {
+        "contains_pii": false,
+        "purpose": "product_analytics"
+      },
+      "properties_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "final_count": {
+            "type": "number"
+          },
+          "format": {
+            "enum": [
+              "png",
+              "json",
+              "csv",
+              "pdf"
+            ],
+            "type": "string"
+          },
+          "pending": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "format",
+          "final_count",
+          "pending"
+        ],
+        "type": "object"
+      }
+    },
+    "project.detection_reviewed": {
+      "event_schema_version": 1,
+      "description": "Visitor set the review status of a detection (confirm, reject, pending).",
+      "privacy": {
+        "contains_pii": false,
+        "purpose": "product_analytics"
+      },
+      "properties_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "enum": [
+              "pending",
+              "confirmed",
+              "edited",
+              "rejected"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      }
+    },
+    "project.manual_mark_added": {
+      "event_schema_version": 1,
+      "description": "Visitor manually marked an egg on the photo.",
+      "privacy": {
+        "contains_pii": false,
+        "purpose": "product_analytics"
+      },
+      "properties_schema": {
+        "additionalProperties": false,
+        "properties": {},
+        "type": "object"
+      }
+    },
+    "project.photo_opened": {
+      "event_schema_version": 1,
+      "description": "Visitor opened one or more photos in the analysis viewer.",
+      "privacy": {
+        "contains_pii": false,
+        "purpose": "product_analytics"
+      },
+      "properties_schema": {
+        "additionalProperties": false,
+        "properties": {
+          "photos": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "photos"
+        ],
+        "type": "object"
+      }
+    }
+  }
+}

@@ -15,7 +15,9 @@ export const Route = createFileRoute("/sobre")({
       { property: "og:description", content: DESC },
       { property: "og:type", content: "article" },
       { property: "og:url", content: URL },
-      { name: "twitter:card", content: "summary" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:image", content: "https://rivulideos-ai.online/og-image.png" },
+      { name: "twitter:image", content: "https://rivulideos-ai.online/og-image.png" },
     ],
     links: [{ rel: "canonical", href: URL }],
     scripts: [

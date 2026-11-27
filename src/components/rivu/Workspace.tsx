@@ -9,6 +9,7 @@ import {
   EyeOff,
   FileJson,
   FileSpreadsheet,
+  FileText,
   FolderOpen,
   Hand,
   ImageDown,
@@ -44,6 +45,7 @@ import {
   type ExportMeta,
 } from "@/lib/annotations";
 import { cn } from "@/lib/utils";
+import { openPrintableReport } from "./report";
 
 interface Photo {
   id: string;
@@ -201,6 +203,7 @@ export function Workspace() {
         }
       }
       if (added.length) {
+        window.__lovableEvents?.track?.("project.photo_opened", { photos: added.length });
         setPhotos((ps) => [...ps, ...added]);
         setCurrentId(added[0]!.id);
       }
@@ -227,6 +230,7 @@ export function Workspace() {
       classId,
     };
     setDets((ds) => [...ds, detection]);
+    window.__lovableEvents?.track?.("project.manual_mark_added");
     setSelectedId(detection.id);
   }
   const onUpdate = (id: string, box: Box) =>
@@ -235,8 +239,10 @@ export function Workspace() {
         d.id === id ? { ...d, ...box, status: d.source === "auto" ? "edited" : d.status } : d,
       ),
     );
-  const setStatus = (id: string, status: Detection["status"]) =>
+  const setStatus = (id: string, status: Detection["status"]) => {
     setDets((ds) => ds.map((d) => (d.id === id ? { ...d, status } : d)));
+    window.__lovableEvents?.track?.("project.detection_reviewed", { status });
+  };
   function remove(id: string) {
     setDets((ds) => ds.filter((d) => d.id !== id));
     if (id === selectedId) setSelectedId(null);
@@ -295,13 +301,21 @@ export function Workspace() {
             : p,
         ),
       );
+      window.__lovableEvents?.track?.("project.analysis_completed", {
+        candidates: detections.length,
+        windows: record.windows,
+        duration_s: Math.round(ms / 1000),
+      });
       toast.success(
         `${detections.length} candidata(s) em ${record.windows} janela(s). Revise para incluir na contagem final.`,
       );
     } catch (error) {
       if ((error as Error).name === "AbortError")
         toast.info("Análise cancelada; anotações preservadas.");
-      else toast.error((error as Error).message);
+      else {
+        window.__lovableEvents?.track?.("project.analysis_failed");
+        toast.error((error as Error).message);
+      }
     } finally {
       analysis.current = null;
       setBusy(false);
@@ -318,16 +332,48 @@ export function Workspace() {
     runs: cur!.runs,
   });
   const base = () => cur!.file.name.replace(/\.[^.]+$/, "");
-  const exportJSON = () =>
+  const exported = (format: string) =>
+    window.__lovableEvents?.track?.("project.count_exported", {
+      format,
+      final_count: c.total,
+      pending: c.pending,
+    });
+  async function exportReport() {
+    if (!cur) return;
+    const win = window.open("", "_blank");
+    if (!win) {
+      toast.error("O navegador bloqueou a janela do relatório. Permita janelas para este site.");
+      return;
+    }
+    try {
+      await openPrintableReport(win, cur.file, dets, {
+        fileName: cur.file.name,
+        width: cur.w,
+        height: cur.h,
+        model: cur.model,
+        threshold,
+        counts: c,
+      });
+      exported("pdf");
+    } catch (error) {
+      win.close();
+      toast.error((error as Error).message);
+    }
+  }
+  const exportJSON = () => {
+    exported("json");
     download(
       new Blob([toJSON(dets, meta())], { type: "application/json" }),
       base() + "_anotacoes.json",
     );
-  const exportCSV = () =>
+  };
+  const exportCSV = () => {
+    exported("csv");
     download(
       new Blob([toCSV(dets, meta())], { type: "text/csv;charset=utf-8" }),
       base() + "_deteccoes.csv",
     );
+  };
   async function exportPNG() {
     if (!cur) return;
     const plan = planPNG(cur.w, cur.h),
@@ -347,6 +393,7 @@ export function Workspace() {
         }),
         base() + (reduced ? "_anotada_reduzida.png" : "_anotada.png"),
       );
+      exported("png");
     } catch (error) {
       toast.error((error as Error).message);
     }
@@ -910,7 +957,7 @@ export function Workspace() {
             </details>
             <section
               aria-label="Exportar anotações"
-              className="grid shrink-0 grid-cols-3 gap-1 border-t p-2"
+              className="grid shrink-0 grid-cols-4 gap-1 border-t p-2"
               style={{ paddingBottom: "calc(4.5rem + env(safe-area-inset-bottom, 0px))" }}
             >
               <Button size="sm" variant="outline" disabled={!cur} onClick={exportPNG}>
@@ -924,6 +971,10 @@ export function Workspace() {
               <Button size="sm" variant="outline" disabled={!cur} onClick={exportCSV}>
                 <FileSpreadsheet className="h-3.5 w-3.5" />
                 CSV
+              </Button>
+              <Button size="sm" variant="outline" disabled={!cur} onClick={exportReport}>
+                <FileText className="h-3.5 w-3.5" />
+                PDF
               </Button>
             </section>
           </aside>
