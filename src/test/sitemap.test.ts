@@ -13,8 +13,8 @@ describe("Google sitemap", () => {
   });
 
   it("uses the published site address in the XML", () => {
-    expect(sitemapXML("https://rivulideos-ai.lovable.app", [{ path: "/" }])).toBe(
-      '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://rivulideos-ai.lovable.app/</loc></url></urlset>',
+    expect(sitemapXML("https://rivulideos-ai.online", [{ path: "/" }])).toBe(
+      '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://rivulideos-ai.online/</loc></url></urlset>',
     );
   });
 });

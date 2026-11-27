@@ -18,14 +18,14 @@ export const Route = createFileRoute("/")({
           "Identificação, contagem e revisão de ovos de rivulídeos em fotografias, com processamento local.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://rivulideos-ai.lovable.app/" },
+      { property: "og:url", content: "https://rivulideos-ai.online/" },
       { name: "twitter:card", content: "summary" },
       {
         name: "google-site-verification",
         content: "XLF6KDjzMQw4Rq55HG2PBmGA-2RZFkFZ76Tk8lirP-Y",
       },
     ],
-    links: [{ rel: "canonical", href: "https://rivulideos-ai.lovable.app/" }],
+    links: [{ rel: "canonical", href: "https://rivulideos-ai.online/" }],
   }),
   component: Workspace,
 });

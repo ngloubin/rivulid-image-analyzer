@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://rivulideos-ai.lovable.app/sitemap.xml
+Sitemap: https://rivulideos-ai.online/sitemap.xml
