@@ -496,6 +496,11 @@ export function Workspace() {
                   JSON/CSV incluem todas as candidatas para auditoria; o PNG mostra as visíveis sem
                   rejeitadas.
                 </p>
+                <p className="mt-2">
+                  <a href="/sobre" className="text-primary underline">
+                    Sobre o projeto e a metodologia
+                  </a>
+                </p>
                 <p className="mt-2 text-muted-foreground">
                   Fotografias processadas apenas no navegador. Coordenadas em pixels da imagem
                   original.
