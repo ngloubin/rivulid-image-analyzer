@@ -62,7 +62,9 @@ O [ScamAdviser aceita contestações do proprietário](https://www.scamadviser.c
 
 **Captura recebida:** o resumo inglês cita explicitamente ScamAdviser, idade recente do domínio e baixa classificação de tráfego. Recomenda cautela com dados pessoais/de pagamento, mas não mostra vítima ou prova de fraude. A captura confirma a fonte provável do alerta, não um diagnóstico próprio de fraude pelo Google.
 
-**Pendências externas:** publicar estas correções; depois confirmar as três páginas no endereço público. A contestação ao ScamAdviser foi preparada separadamente, mas não enviada. A indexação e a atualização de resumos dependem de novas leituras dos serviços; não há garantia de prazo ou posição. A integração com a conta incorreta do Search Console não foi utilizada.
+**Publicação confirmada em 28/11/2026:** página inicial, Sobre e Privacidade retornam HTTP 200 em https://rivulideos-ai.online, com um H1 e um canonical próprio por página. Autoria e contato aparecem nas páginas públicas; o mapa inclui as três páginas e robots.txt continua permitindo rastreamento. Navegação publicada verificada em 780×585 e 390×844, sem erros de execução ou largura excedente.
+
+**Pendências externas:** a contestação ao ScamAdviser foi preparada como e-mail pronto para envio pelo responsável, mas não enviada: não há conexão de envio de e-mail disponível. A indexação e a atualização de resumos dependem de novas leituras dos serviços; não há garantia de prazo ou posição. A integração com a conta incorreta do Search Console não foi utilizada.
 
 ## Melhorias prioritárias identificadas na revisão original
 

@@ -26,6 +26,6 @@
 - [x] Add a privacy explanation based on the actual local processing and usage events.
 - [x] Include authorized attribution to the robotics team Esquadrão-A29, SESI Pirassununga, São Paulo, and contact nogueiramatheus780@gmail.com.
 - [x] Verify desktop/mobile navigation, manual marking and four exports; regression suite: 50 tests passed.
-- [ ] Publish and check live pages (awaiting publish authorization/action).
+- [x] Publish and check live pages: homepage, About and Privacy return HTTP 200; sitemap includes all three; desktop/mobile navigation verified on rivulideos-ai.online.
 - [x] Prepare a factual ScamAdviser review request in .lovable/reviews/scamadviser-review-request.md.
-- [ ] Send the ScamAdviser request (awaiting publication and explicit approval to send).
+- [ ] Send the ScamAdviser request (blocked: no email-sending connection available; ready-to-send draft delivered to owner).
