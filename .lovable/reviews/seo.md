@@ -49,9 +49,24 @@ O [ScamAdviser aceita contestações do proprietário](https://www.scamadviser.c
 | Metodologia | A página Sobre explica o uso, mas não apresenta validação científica, limitações detalhadas ou referências | Não é possível confirmar precisão ou credenciais por essa página |
 | Dados estruturados | WebApplication na página Sobre, sem avaliações inventadas | Descreve a ferramenta, mas não substitui evidências e conteúdo visível |
 
-## Melhorias prioritárias recomendadas
+## Correções implementadas após autorização — 28/11/2026
 
-Estas são oportunidades identificadas manualmente, não falhas registradas pelos nove verificadores automáticos. **Nenhuma alteração na aplicação foi feita nesta revisão.**
+- Nome da ferramenta como H1, contexto sucinto e links visíveis para Sobre/metodologia e Privacidade na página inicial, sem substituir a ferramenta por uma landing page.
+- Autoria autorizada: equipe de Robótica Esquadrão-A29 do SESI de Pirassununga, São Paulo. Contato público autorizado: nogueiramatheus780@gmail.com.
+- Página `/privacidade`: processamento local, preferências e cache do modelo, eventos de uso, diagnósticos da hospedagem, serviços externos e canal de contato. Sem prometer anonimato total ou inventar prazos de retenção.
+- Conteúdo de `/sobre` corrigido: rivulídeos anuais e não anuais, fontes científicas e ICMBio, limitações da detecção, revisão humana, ausência de métricas de validação publicadas e exportação para PDF.
+- Dados estruturados coerentes: WebApplication na ferramenta, AboutPage na página Sobre, sem preço ou avaliações não confirmados. Metadados próprios e canonical na página de privacidade.
+- A nova página participa automaticamente do mapa do site. Não foram alterados robots.txt, o domínio, as configurações de badge, o modelo, seus binários ou a engine.
+
+**Verificações:** 50 testes passaram; ESLint dos arquivos alterados e compilação automática sem erros. No navegador local, navegação e contato, abertura de foto sintética, marcação manual e cliques normais em PNG, JSON, CSV e PDF passaram em 1280×1800, 780×585 e 390×844. HTML inicial das três páginas: HTTP 200, um H1 e um canonical, descrições próprias e JSON-LD válido. Não foi repetida a inferência automática nesta mudança de conteúdo.
+
+**Captura recebida:** o resumo inglês cita explicitamente ScamAdviser, idade recente do domínio e baixa classificação de tráfego. Recomenda cautela com dados pessoais/de pagamento, mas não mostra vítima ou prova de fraude. A captura confirma a fonte provável do alerta, não um diagnóstico próprio de fraude pelo Google.
+
+**Pendências externas:** publicar estas correções; depois confirmar as três páginas no endereço público. A contestação ao ScamAdviser foi preparada separadamente, mas não enviada. A indexação e a atualização de resumos dependem de novas leituras dos serviços; não há garantia de prazo ou posição. A integração com a conta incorreta do Search Console não foi utilizada.
+
+## Melhorias prioritárias identificadas na revisão original
+
+Estas foram oportunidades identificadas manualmente, não falhas registradas pelos nove verificadores automáticos. As correções posteriores estão registradas acima.
 
 1. **Transparência e responsabilidade:** publicar quem responde pelo projeto e um contato real, com autorização; não inventar vínculo com escola, universidade, laboratório ou titulação.
 2. **Privacidade:** explicar separadamente que fotografias e inferência permanecem no dispositivo e que a hospedagem registra eventos de uso; descrever somente dados e práticas confirmados, sem prometer ausência total de coleta.
@@ -75,5 +90,5 @@ Não se recomenda criar conteúdo repetindo “não somos fraude”, encher pág
 - Indexação, cliques, impressões e consultas atuais não foram consultados na conta correta do Search Console.
 - Os verificadores especializados de conteúdo e metadados do painel completo não tinham revisão registrada; a conferência manual acima complementa os fundamentos automáticos, sem atribuir resultados a esses verificadores.
 - Não foram executados auditoria completa de segurança, medição de Core Web Vitals em campo ou teste de posição por palavra-chave.
-- O relato do resumo negativo permanece aguardando captura e fontes.
-- Foi salvo apenas este relatório; modelos, fotografias, inferência e aparência da aplicação foram preservados.
+- A captura foi recebida e analisada após a revisão inicial; não foi realizada uma reprodução independente da pesquisa americana.
+- As correções posteriores preservam modelos, fotografias e inferência; apenas apresentação e conteúdo público foram alterados.

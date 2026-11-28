@@ -9,13 +9,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Ferramenta científica para identificar, contar e revisar ovos de rivulídeos em fotografias de substrato, direto no navegador.",
+          "Conte e revise ovos de rivulídeos em fotografias com IA local e marcação manual. Exporte PNG, JSON, CSV e relatório para PDF no navegador.",
       },
       { property: "og:title", content: "Rivulídeos AI" },
       {
         property: "og:description",
         content:
-          "Identificação, contagem e revisão de ovos de rivulídeos em fotografias, com processamento local.",
+          "Contagem e revisão humana de ovos em fotografias, com IA local e exportações PNG, JSON, CSV e relatório para PDF.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://rivulideos-ai.online/" },
@@ -28,6 +28,28 @@ export const Route = createFileRoute("/")({
       },
     ],
     links: [{ rel: "canonical", href: "https://rivulideos-ai.online/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          name: "Rivulídeos AI",
+          url: "https://rivulideos-ai.online/",
+          applicationCategory: "ScientificApplication",
+          operatingSystem: "Navegador web",
+          inLanguage: "pt-BR",
+          description:
+            "Ferramenta de contagem e revisão de ovos de rivulídeos em fotografias, com processamento local e revisão humana.",
+          featureList: [
+            "Análise local de imagens",
+            "Marcação e revisão manual",
+            "Exportação PNG, JSON e CSV",
+            "Relatório para PDF",
+          ],
+        }),
+      },
+    ],
   }),
   component: Workspace,
 });

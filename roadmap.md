@@ -11,7 +11,7 @@
 - [x] Connect the Google Search Console account.
 - [x] Publish the uploaded verification file, site verification tag, canonical URL, sitemap and robots reference.
 - [x] Verify the live files and submit the sitemap to Search Console.
-- [ ] Wait for Google to process the sitemap and index the homepage; it is currently unknown to Google, with no sitemap errors or warnings.
+- [ ] Confirm indexing in the owner's Search Console account; the owner reports successful live URL tests and sitemap submission, but indexing is not confirmed.
 
 # Entrega 27/11
 - [x] Revisão geral (desktop/celular)
@@ -19,3 +19,13 @@
 - [x] Relatório em PDF da contagem
 - [x] Instalável no celular (manifest)
 - [x] Eventos de uso (análise, exportação, correções manuais)
+
+# SEO e transparência — 28/11
+- [x] Add a semantic homepage title, concise context and visible About/privacy navigation without changing analysis behavior.
+- [x] Correct About claims, add scientific sources, limitations and PDF export description; align structured data.
+- [x] Add a privacy explanation based on the actual local processing and usage events.
+- [x] Include authorized attribution to the robotics team Esquadrão-A29, SESI Pirassununga, São Paulo, and contact nogueiramatheus780@gmail.com.
+- [x] Verify desktop/mobile navigation, manual marking and four exports; regression suite: 50 tests passed.
+- [ ] Publish and check live pages (awaiting publish authorization/action).
+- [x] Prepare a factual ScamAdviser review request in .lovable/reviews/scamadviser-review-request.md.
+- [ ] Send the ScamAdviser request (awaiting publication and explicit approval to send).

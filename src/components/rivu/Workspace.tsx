@@ -453,9 +453,7 @@ export function Workspace() {
             <div className="grid h-6 w-6 place-items-center rounded bg-primary text-[11px] font-bold text-primary-foreground">
               R
             </div>
-            <span className="hidden text-sm font-semibold tracking-tight sm:inline">
-              Rivulídeos AI
-            </span>
+            <h1 className="sr-only text-sm font-semibold sm:not-sr-only">Rivulídeos AI</h1>
           </div>
           <Button
             size="sm"
@@ -541,7 +539,7 @@ export function Workspace() {
                   Contagem final = manuais + automáticas confirmadas/editadas. Pendentes não entram.
                   Os números identificam as anotações e podem ter lacunas após filtros/rejeições.
                   JSON/CSV incluem todas as candidatas para auditoria; o PNG mostra as visíveis sem
-                  rejeitadas.
+                  rejeitadas. O PDF reúne a foto anotada, a contagem e a tabela para impressão.
                 </p>
                 <p className="mt-2">
                   <a href="/sobre" className="text-primary underline">
@@ -556,6 +554,19 @@ export function Workspace() {
             </Popover>
           </div>
         </header>
+        <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-4 gap-y-1 border-b px-3 py-1.5 text-xs">
+          <p className="text-muted-foreground">
+            Contagem e revisão de ovos de rivulídeos em fotos · análise local
+          </p>
+          <nav aria-label="Informações do projeto" className="flex shrink-0 gap-4">
+            <a href="/sobre" className="text-primary underline underline-offset-2">
+              Sobre e metodologia
+            </a>
+            <a href="/privacidade" className="text-primary underline underline-offset-2">
+              Privacidade
+            </a>
+          </nav>
+        </div>
         <div className="flex min-h-0 flex-1 flex-col md:flex-row">
           <main
             className="relative flex min-h-[55vh] flex-1 flex-col md:min-h-0"

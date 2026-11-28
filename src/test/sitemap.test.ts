@@ -6,10 +6,10 @@ import { sitemapStaticPaths, sitemapXML } from "@/lib/sitemap";
 import { routeTree } from "@/routeTree.gen";
 
 describe("Google sitemap", () => {
-  it("includes the public analysis and about pages", () => {
+  it("includes the public analysis, privacy and about pages", () => {
     const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
 
-    expect(sitemapStaticPaths(router)).toEqual(["/", "/sobre"]);
+    expect(sitemapStaticPaths(router)).toEqual(["/", "/privacidade", "/sobre"]);
   });
 
   it("uses the published site address in the XML", () => {

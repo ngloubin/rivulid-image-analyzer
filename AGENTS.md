@@ -36,3 +36,4 @@ use the editor.
 - `onnxruntime-web` is imported dynamically only when a model is loaded, so the first page load stays light.
 - Run model sessions in the browser inference Worker and serve verified compressed ONNX/ORT assets from the same origin; the external-WASM Vite alias avoids emitting an oversized uncompressed runtime asset.
 - Serve the favicon and touch icon as resized local PNGs declared in the root head; avoid shipping the full-resolution logo for browser icons.
+- Keep public methodology and privacy information in dedicated, sitemap-included content routes linked from the workspace; this preserves direct access to analysis while making project context discoverable.
